@@ -39,4 +39,13 @@ class Donor extends Model
     {
         return $this->belongsTo(User::class, 'UserID', 'UserID');
     }
+
+    /**
+     * Relationship: A Donor can make many Donations over time.
+     * This is key for COUNT and GROUP BY queries on donation history.
+     */
+    public function donations()
+    {
+        return $this->hasMany(Donation::class, 'DonorID', 'DonorID');
+    }
 }
