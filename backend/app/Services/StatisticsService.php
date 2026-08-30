@@ -121,4 +121,42 @@ class StatisticsService
 
         return $results->toArray();
     }
+
+
+    /* ========================================================================
+       QUERY 4 — JOIN + COUNT + GROUP BY + HAVING
+       SQL Concepts: JOIN, COUNT(), GROUP BY, HAVING
+       Question: Find donors who have made at least 3 donations.
+       
+       HAVING filters GROUPS after GROUP BY (unlike WHERE which filters rows before).
+       This returns only donors meeting the minimum threshold of donations.
+
+       Generated SQL:
+       SELECT users.FullName, Donors.DonorID, Donors.BloodGroup,
+              COUNT(Donations.DonationID) AS total_donations
+       FROM Donors
+       INNER JOIN Donations ON Donors.DonorID = Donations.DonorID
+       INNER JOIN users ON Donors.UserID = users.UserID
+       GROUP BY Donors.DonorID, users.FullName, Donors.BloodGroup
+       HAVING COUNT(Donations.DonationID) >= 3
+       ORDER BY total_donations DESC
+    ======================================================================== */
+    public function getFrequentDonors(int $minimumDonations = 3): array
+    {
+        $results = DB::table('Donors')
+            ->join('Donations', 'Donors.DonorID', '=', 'Donations.DonorID') // INNER JOIN: only donors who have donated
+            ->join('users', 'Donors.UserID', '=', 'users.UserID')
+            ->select(
+                'Donors.DonorID',
+                'users.FullName',
+                'Donors.BloodGroup',
+                DB::raw('COUNT(Donations.DonationID) AS total_donations')
+            )
+            ->groupBy('Donors.DonorID', 'users.FullName', 'Donors.BloodGroup')
+            ->having('total_donations', '>=', $minimumDonations) // HAVING filters groups, not individual rows
+            ->orderByDesc('total_donations')
+            ->get();
+
+        return $results->toArray();
+    }
 }
