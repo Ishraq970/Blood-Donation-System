@@ -5,6 +5,7 @@ import UserForm from './components/users/UserForm';
 import DonorsList from './components/donors/DonorsList';
 import DonorForm from './components/donors/DonorForm';
 import Home from './components/Home';
+import SqlReports from './components/SqlReports';
 
 // Navigation Bar Component
 const Navigation = () => {
@@ -14,6 +15,7 @@ const Navigation = () => {
       <Link to="/" className={location.pathname === '/' ? 'active' : ''}>Home</Link>
       <Link to="/users" className={location.pathname.startsWith('/users') ? 'active' : ''}>Manage Users</Link>
       <Link to="/donors" className={location.pathname.startsWith('/donors') ? 'active' : ''}>Manage Donors</Link>
+      <Link to="/reports" className={location.pathname.startsWith('/reports') ? 'active' : ''}>SQL Reports</Link>
     </nav>
   );
 };
@@ -37,6 +39,9 @@ const App: React.FC = () => {
           <Route path="/donors" element={<DonorsList />} />
           <Route path="/donors/create" element={<DonorForm />} />
           <Route path="/donors/edit/:id" element={<DonorForm />} />
+
+          {/* SQL Reports Route */}
+          <Route path="/reports" element={<SqlReports />} />
         </Routes>
       </div>
     </Router>
