@@ -50,4 +50,41 @@ class StatisticsService
 
         return $results->toArray();
     }
+
+
+    /* ========================================================================
+       QUERY 2 — LEFT JOIN + COUNT + GROUP BY
+       SQL Concepts: LEFT JOIN, COUNT(), GROUP BY
+       Question: Show ALL donors and how many donations each has made,
+                 INCLUDING donors who have never donated (they show 0).
+       
+       A LEFT JOIN keeps ALL rows from the LEFT table (Donors) even if
+       there is NO matching row in the RIGHT table (Donations).
+
+       Generated SQL:
+       SELECT users.FullName, Donors.DonorID, Donors.BloodGroup,
+              COUNT(Donations.DonationID) AS total_donations
+       FROM Donors
+       LEFT JOIN Donations ON Donors.DonorID = Donations.DonorID
+       INNER JOIN users ON Donors.UserID = users.UserID
+       GROUP BY Donors.DonorID, users.FullName, Donors.BloodGroup
+       ORDER BY total_donations DESC
+    ======================================================================== */
+    public function getDonorDonationCounts(): array
+    {
+        $results = DB::table('Donors')
+            ->leftJoin('Donations', 'Donors.DonorID', '=', 'Donations.DonorID') // LEFT JOIN keeps donors with 0 donations
+            ->join('users', 'Donors.UserID', '=', 'users.UserID')
+            ->select(
+                'Donors.DonorID',
+                'users.FullName',
+                'Donors.BloodGroup',
+                DB::raw('COUNT(Donations.DonationID) AS total_donations') // COUNT aggregate function
+            )
+            ->groupBy('Donors.DonorID', 'users.FullName', 'Donors.BloodGroup') // GROUP BY to count per donor
+            ->orderByDesc('total_donations')
+            ->get();
+
+        return $results->toArray();
+    }
 }
