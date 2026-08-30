@@ -87,4 +87,38 @@ class StatisticsService
 
         return $results->toArray();
     }
+
+
+    /* ========================================================================
+       QUERY 3 — AVG + GROUP BY
+       SQL Concepts: AVG(), GROUP BY
+       Question: Find the average donor weight for each blood group.
+       
+       AVG() calculates the mathematical average of a numeric column.
+       GROUP BY creates separate groups so AVG is computed per blood group.
+
+       Generated SQL:
+       SELECT BloodGroup,
+              ROUND(AVG(WeightKg), 2) AS average_weight,
+              COUNT(*) AS donor_count
+       FROM Donors
+       WHERE WeightKg IS NOT NULL
+       GROUP BY BloodGroup
+       ORDER BY BloodGroup ASC
+    ======================================================================== */
+    public function getAverageWeightByBloodGroup(): array
+    {
+        $results = DB::table('Donors')
+            ->whereNotNull('WeightKg') // only include donors with a recorded weight
+            ->select(
+                'BloodGroup',
+                DB::raw('ROUND(AVG(WeightKg), 2) AS average_weight'), // AVG aggregate function
+                DB::raw('COUNT(*) AS donor_count')
+            )
+            ->groupBy('BloodGroup') // GROUP BY blood group so we get one row per group
+            ->orderBy('BloodGroup', 'asc')
+            ->get();
+
+        return $results->toArray();
+    }
 }
