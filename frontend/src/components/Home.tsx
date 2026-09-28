@@ -1,14 +1,28 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Hero from './Hero';
+import Marquee from './Marquee';
+import HowItWorks from './HowItWorks';
+import UrgentRequests from './UrgentRequests';
+import DonorPanel from './DonorPanel';
+import VolunteerSection from './VolunteerSection';
+import FaqSection from './FaqSection';
 
-const Home: React.FC = () => {
+interface HomeProps {
+  isBn: boolean;
+  onToast: (msg: string) => void;
+}
+
+const Home: React.FC<HomeProps> = ({ isBn, onToast }) => {
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
-      <h1>Welcome to the Blood Donation System</h1>
-      <br />
-      <Link to="/users" className="btn btn-success" style={{ padding: '10px 20px', fontSize: '18px' }}>Manage Users</Link>
-      <Link to="/donors" className="btn btn-success" style={{ padding: '10px 20px', fontSize: '18px', marginLeft: '10px' }}>Manage Donors</Link>
-    </div>
+    <main>
+      <Hero isBn={isBn} />
+      <Marquee />
+      <HowItWorks isBn={isBn} />
+      <UrgentRequests isBn={isBn} onToast={onToast} />
+      <DonorPanel isBn={isBn} onToast={onToast} />
+      <VolunteerSection isBn={isBn} />
+      <FaqSection isBn={isBn} />
+    </main>
   );
 };
 
