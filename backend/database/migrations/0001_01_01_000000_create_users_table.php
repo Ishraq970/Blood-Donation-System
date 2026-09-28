@@ -12,16 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id('UserID');
-            $table->string('FullName', 100);
-            $table->string('Email', 150)->unique();
-            $table->string('PasswordHash', 255);
-            $table->string('Phone', 20)->nullable();
-            $table->string('Address', 255)->nullable();
-            $table->string('Gender', 20)->nullable();
-            $table->string('AccountStatus', 30)->default('Active');
-            $table->timestamp('CreatedAt')->useCurrent();
-            $table->timestamps(); // keeps standard created_at and updated_at just in case
+            $table->id();
+            $table->uuid('uuid')->unique();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('phone', 30)->nullable()->index();
+            $table->timestamp('phone_verified_at')->nullable();
+            $table->string('password');
+            $table->string('preferred_locale', 5)->default('en');
+            $table->string('profile_photo_path', 2048)->nullable();
+            $table->date('date_of_birth')->nullable();
+            $table->enum('status', ['ACTIVE', 'SUSPENDED', 'CLOSED'])->default('ACTIVE')->index();
+            $table->timestamp('last_login_at')->nullable();
+            $table->timestamp('last_seen_at')->nullable();
+            $table->rememberToken();
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
